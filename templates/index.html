@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SparkLearn AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+
+<main class="app">
+
+    <header>
+        <p class="logo">✦ SparkLearn <b>AI</b></p>
+
+        <p class="label">SCHOOL LEARNING COMPANION</p>
+
+        <h1>Understand. Practice. <span>Grow.</span></h1>
+
+        <p class="intro">
+            A friendly tutor for Mathematics, Physics, and Chemistry.
+        </p>
+    </header>
+
+    <div class="gamification" style="text-align: center; margin-bottom: 20px; font-weight: bold; color: #2563eb; background: #e0e7ff; padding: 10px; border-radius: 20px;">
+        ⭐ XP: <span id="xp-counter">0</span> | 🏆 Rank: <span id="rank-badge">Novice</span>
+    </div>
+
+    <section class="card">
+
+        <div class="choices">
+
+            <label>
+                Grade
+                <select id="grade">
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </label>
+
+            <label>
+                Subject
+                <select id="subject">
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                </select>
+            </label>
+
+        </div>
+
+
+        <label class="ask-label" for="question">
+            What would you like to learn?
+        </label>
+
+        <textarea
+            id="question"
+            rows="4"
+            placeholder="Example: Explain fractions using an easy example."
+        ></textarea>
+
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <input type="file" id="imageInput" accept="image/*" style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 9px; cursor: pointer;">
+            <button type="button" id="mic-btn" style="background:#ef4444; color:#fff; border:0; padding:11px 15px; border-radius:9px; font-weight:bold; cursor:pointer;">🎤 Dictate</button>
+        </div>
+
+
+        <button id="send" type="button">
+            Ask SparkLearn →
+        </button>
+
+
+        <div class="suggestions">
+
+            <button type="button" data-question="Teach me fractions using pizza slices.">
+                Fractions
+            </button>
+
+            <button type="button" data-question="Explain Newton's third law simply.">
+                Newton's laws
+            </button>
+
+            <button type="button" data-question="What are acids and bases?">
+                Acids & bases
+            </button>
+
+        </div>
+
+
+        <article id="answer-box" hidden>
+
+            <div class="answer-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>✦ SparkLearn explains</span>
+                <button type="button" id="tts-btn" style="background:#10b981; color:#fff; border:0; padding:5px 12px; border-radius:15px; cursor:pointer; font-size: 11px; font-weight: bold;">🔊 Read Aloud</button>
+            </div>
+
+            <div id="answer"></div>
+
+        </article>
+
+    </section>
+
+
+    <p class="note">
+        AI can make mistakes. Check important facts with your teacher or textbook.
+    </p>
+
+</main>
+
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
