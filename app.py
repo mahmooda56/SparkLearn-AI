@@ -68,6 +68,7 @@ Rules:
 - If the student asks for code, give simple working code and explain it.
 - Be encouraging and helpful.
 - If an image is provided, analyze it carefully to help the student.
+- IMPORTANT: At the end of every explanation, ALWAYS give the student a quick practice question or mini-quiz to test their understanding!
 """
 
         user_prompt = f"""
