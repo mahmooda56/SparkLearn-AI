@@ -26,28 +26,52 @@ document.querySelectorAll("[data-question]").forEach(function(button) {
     });
 });
 
-// Speech Recognition
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    
-    micBtn.addEventListener("click", () => {
-        recognition.start();
-        micBtn.textContent = "🎙️ Listening...";
-    });
-    
-    recognition.onresult = (event) => {
-        question.value = event.results[0][0].transcript;
-        micBtn.textContent = "🎤 Dictate";
-    };
-    
-    recognition.onerror = () => { micBtn.textContent = "🎤 Dictate"; };
-    recognition.onend = () => { micBtn.textContent = "🎤 Dictate"; };
-} else {
-    micBtn.style.display = "none";
-}
+// Mobile-Friendly Speech Recognition (via backend)
+let mediaRecorder;
+let audioChunks = [];
+
+micBtn.addEventListener("click", async () => {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        return;
+    }
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        
+        mediaRecorder.ondataavailable = e => {
+            audioChunks.push(e.data);
+        };
+        
+        mediaRecorder.onstop = async () => {
+            micBtn.textContent = "⏳ Processing...";
+            micBtn.style.background = "#fbbf24";
+            
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            audioChunks = [];
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'audio.webm');
+            
+            try {
+                const res = await fetch("/api/transcribe", { method: "POST", body: formData });
+                const data = await res.json();
+                if (data.text) question.value = (question.value + " " + data.text).trim();
+            } catch (err) {
+                alert("Transcription failed.");
+            }
+            micBtn.textContent = "🎤 Dictate";
+            micBtn.style.background = "#ef4444";
+        };
+        
+        audioChunks = [];
+        mediaRecorder.start();
+        micBtn.textContent = "🛑 Stop";
+        micBtn.style.background = "#3b82f6";
+    } catch (err) {
+        alert("Microphone access denied or not supported on this browser.");
+    }
+});
 
 // Text to Speech
 ttsBtn.addEventListener("click", () => {

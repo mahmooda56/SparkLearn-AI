@@ -118,6 +118,28 @@ Student question:
             "error": "SparkLearn could not answer right now. Check the terminal for the exact error."
         }), 500
 
+@app.route('/api/transcribe', methods=['POST'])
+def transcribe():
+    if 'audio' not in request.files:
+        return jsonify({"error": "No audio file"}), 400
+    
+    audio_file = request.files['audio']
+    import tempfile
+    temp_dir = tempfile.mkdtemp()
+    filepath = os.path.join(temp_dir, 'audio.webm')
+    audio_file.save(filepath)
+    
+    try:
+        with open(filepath, "rb") as file:
+            transcription = client.audio.transcriptions.create(
+              file=(filepath, file.read()),
+              model="whisper-large-v3",
+              response_format="json",
+            )
+        return jsonify({"text": transcription.text})
+    except Exception as e:
+        print("Whisper Error:", e)
+        return jsonify({"error": str(e)}), 500
 
 # -----------------------------
 # START SERVER
